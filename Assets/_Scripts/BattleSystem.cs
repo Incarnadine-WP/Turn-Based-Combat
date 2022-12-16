@@ -8,6 +8,7 @@ public class BattleSystem : MonoBehaviour
 {
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private GameObject _enemyPrefab;
+    [SerializeField] private GameObject _fireBall;
 
     [SerializeField] private Transform _playerPlace;
     [SerializeField] private Transform _enemyPlace;
@@ -16,18 +17,26 @@ public class BattleSystem : MonoBehaviour
     [SerializeField] private BattleHUD _enemyHUD;
 
     [SerializeField] private Text _dialogueText;
+    [SerializeField] private PopDamage _popText;
 
+    private PopDamage _popDamage;
     private Unit _playerUnit;
     private Unit _enemyUnit;
     private BattleState _state;
     private float _delayText = 2f;
     private float _delayTextFast = 1f;
+    private float _delayAction = 0;
 
 
-    void Start()
+    private void Start()
     {
         _state = BattleState.START;
         StartCoroutine(SetupBattle());
+    }
+
+    private void Update()
+    {
+        _delayAction += Time.deltaTime;
     }
 
     private IEnumerator SetupBattle()
@@ -51,7 +60,10 @@ public class BattleSystem : MonoBehaviour
 
     private IEnumerator PlayerAttack()
     {
+        yield return new WaitForSeconds(_delayTextFast);
+
         bool isDead = _enemyUnit.TakeDamage(_playerUnit.damage);
+        StartCoroutine(_popText.PopTextDMG());
 
         _enemyHUD.SetHP(_enemyUnit.currentHP);
         _dialogueText.text = "You deal to " + _enemyUnit.unitName + " " + _playerUnit.damage + " damage!";
@@ -130,7 +142,18 @@ public class BattleSystem : MonoBehaviour
         if (_state != BattleState.PLAYERTURN)
             return;
 
-        StartCoroutine(PlayerAttack());
+        if (_delayAction >= 3)
+        {
+            _delayAction = 0f;
+
+            GameObject fireBall = Instantiate(_fireBall, _playerPlace);
+            _popDamage = fireBall.GetComponent<PopDamage>();
+            Destroy(fireBall, 1.1f);
+
+            _popDamage.AttackTweenPlayer();
+
+            StartCoroutine(PlayerAttack());
+        }
     }
 
     public void OnHealButton()
@@ -138,6 +161,10 @@ public class BattleSystem : MonoBehaviour
         if (_state != BattleState.PLAYERTURN)
             return;
 
-        StartCoroutine(PlayerHeal());
+        if (_delayAction >= 3f)
+        {
+            _delayAction = 0f;
+            StartCoroutine(PlayerHeal());
+        }
     }
 }

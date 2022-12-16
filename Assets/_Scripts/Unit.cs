@@ -10,6 +10,7 @@ public class Unit : MonoBehaviour
 
     public bool TakeDamage(int dmg)
     {
+
         currentHP -= dmg;
 
         if (currentHP <= 0)
@@ -24,5 +25,7 @@ public class Unit : MonoBehaviour
         if (currentHP >= maxHP)
             currentHP = maxHP;
     }
+
+
 
 }
