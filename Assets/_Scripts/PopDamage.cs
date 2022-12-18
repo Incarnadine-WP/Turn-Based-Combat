@@ -8,21 +8,16 @@ public class PopDamage : MonoBehaviour
 {
     [SerializeField] private Transform _target;
 
-    public void AttackTweenPlayer()
-    {
-        transform.DOMove(_target.position, 1f);
-    }
-
-    public IEnumerator PopTextDMG()
+    public IEnumerator PopTweenMove()
     {
         Vector3 startPosition = transform.position;
 
         gameObject.SetActive(true);
         transform.DOMove(_target.position, 1f);
 
-        yield return new WaitForSeconds(1.2f);
+        yield return new WaitForSeconds(0.9f);
         gameObject.SetActive(false);
-        transform.DOMove(startPosition,1);
+        transform.DOMove(startPosition,1f);
     }
 
 }

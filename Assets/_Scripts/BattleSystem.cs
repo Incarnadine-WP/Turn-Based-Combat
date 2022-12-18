@@ -8,7 +8,6 @@ public class BattleSystem : MonoBehaviour
 {
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private GameObject _enemyPrefab;
-    [SerializeField] private GameObject _fireBall;
 
     [SerializeField] private Transform _playerPlace;
     [SerializeField] private Transform _enemyPlace;
@@ -17,10 +16,9 @@ public class BattleSystem : MonoBehaviour
     [SerializeField] private BattleHUD _enemyHUD;
 
     [SerializeField] private Text _dialogueText;
-    [SerializeField] private PopDamage _popText;
+    [SerializeField] private PopDamage [] _popDamage;
 
-    private PopDamage _popDamage;
-    private Unit _playerUnit;
+    private UnitPlayer _playerUnit;
     private Unit _enemyUnit;
     private BattleState _state;
     private float _delayText = 2f;
@@ -42,15 +40,15 @@ public class BattleSystem : MonoBehaviour
     private IEnumerator SetupBattle()
     {
         GameObject player = Instantiate(_playerPrefab, _playerPlace);
-        _playerUnit = player.GetComponent<Unit>();
+        _playerUnit = player.GetComponent<UnitPlayer>();
 
         GameObject enemy = Instantiate(_enemyPrefab, _enemyPlace);
         _enemyUnit = enemy.GetComponent<Unit>();
 
         _dialogueText.text = "Prepare to fight with - " + _enemyUnit.unitName;
 
-        _playerHUD.SetHUD(_playerUnit);
-        _enemyHUD.SetHUD(_enemyUnit);
+        _playerHUD.SetHUDPlayer(_playerUnit);
+        _enemyHUD.SetHUDEnemy(_enemyUnit);
 
         yield return new WaitForSeconds(_delayText);
 
@@ -63,7 +61,7 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(_delayTextFast);
 
         bool isDead = _enemyUnit.TakeDamage(_playerUnit.damage);
-        StartCoroutine(_popText.PopTextDMG());
+        StartCoroutine(_popDamage[1].PopTweenMove());
 
         _enemyHUD.SetHP(_enemyUnit.currentHP);
         _dialogueText.text = "You deal to " + _enemyUnit.unitName + " " + _playerUnit.damage + " damage!";
@@ -97,7 +95,7 @@ public class BattleSystem : MonoBehaviour
 
     private IEnumerator EnemyTurn()
     {
-        _dialogueText.text = _enemyUnit.name + " attack you on " + _enemyUnit.damage + " damage.";
+        _dialogueText.text = _enemyUnit.unitName + " attack you on " + _enemyUnit.damage + " damage.";
 
         yield return new WaitForSeconds(_delayTextFast);
 
@@ -122,7 +120,7 @@ public class BattleSystem : MonoBehaviour
 
     private void PlayerTurn()
     {
-        _dialogueText.text = "Choose an action";
+        _dialogueText.text = "Choose an action:";
     }
 
     private void EndBattle()
@@ -146,11 +144,7 @@ public class BattleSystem : MonoBehaviour
         {
             _delayAction = 0f;
 
-            GameObject fireBall = Instantiate(_fireBall, _playerPlace);
-            _popDamage = fireBall.GetComponent<PopDamage>();
-            Destroy(fireBall, 1.1f);
-
-            _popDamage.AttackTweenPlayer();
+            StartCoroutine(_popDamage[0].PopTweenMove());
 
             StartCoroutine(PlayerAttack());
         }
