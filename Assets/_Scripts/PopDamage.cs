@@ -20,4 +20,11 @@ public class PopDamage : MonoBehaviour
         transform.DOMove(startPosition,1f);
     }
 
+    public IEnumerator FadeObj(SpriteRenderer sprite)
+    {
+        sprite.DOFade(0, 2f);
+        yield return new WaitForSeconds(2f);
+        sprite.gameObject.SetActive(false);
+    }
+
 }

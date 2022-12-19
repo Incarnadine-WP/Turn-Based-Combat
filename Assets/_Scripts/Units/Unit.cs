@@ -8,13 +8,26 @@ public class Unit : MonoBehaviour
     public int maxHP;
     public int currentHP;
 
+    private PopDamage _tweenScript;
+    private SpriteRenderer _spriteUnit;
+
+    private void Start()
+    {
+        _spriteUnit = GetComponent<SpriteRenderer>();
+        _tweenScript = FindObjectOfType<PopDamage>().GetComponent<PopDamage>();
+    }
+
     public bool TakeDamage(int dmg)
     {
 
         currentHP -= dmg;
 
         if (currentHP <= 0)
+        {
+            StartCoroutine(_tweenScript.FadeObj(_spriteUnit));
             return true;
+        }
+
         else
             return false;
     }
@@ -25,7 +38,5 @@ public class Unit : MonoBehaviour
         if (currentHP >= maxHP)
             currentHP = maxHP;
     }
-
-
 
 }

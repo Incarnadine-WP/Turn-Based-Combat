@@ -7,7 +7,7 @@ public class BattleHUD : MonoBehaviour
     [SerializeField] private Text _levelText;
     [SerializeField] private Slider _hpSlider;
 
-    public void SetHUDEnemy(Unit unit)
+    public void SetHUDEnemy(UnitEnemy unit)
     {
         _nametext.text = unit.unitName;
         _levelText.text = "Level: " +unit.unitLvl;
@@ -27,4 +27,4 @@ public class BattleHUD : MonoBehaviour
     {
         _hpSlider.value = hp;
     }
-}
+} 

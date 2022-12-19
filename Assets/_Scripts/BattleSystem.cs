@@ -1,11 +1,13 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public enum BattleState { START, PLAYERTURN, ENEMYTURN, WON, LOST }
 
 public class BattleSystem : MonoBehaviour
 {
+    [Header("GameObjects")]
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private GameObject _enemyPrefab;
 
@@ -15,11 +17,13 @@ public class BattleSystem : MonoBehaviour
     [SerializeField] private BattleHUD _playerHUD;
     [SerializeField] private BattleHUD _enemyHUD;
 
+    [Header("Text")]
     [SerializeField] private Text _dialogueText;
+    [SerializeField] private TextMeshProUGUI [] _damageText; 
     [SerializeField] private PopDamage [] _popDamage;
 
     private UnitPlayer _playerUnit;
-    private Unit _enemyUnit;
+    private UnitEnemy _enemyUnit;
     private BattleState _state;
     private float _delayText = 2f;
     private float _delayTextFast = 1f;
@@ -43,7 +47,7 @@ public class BattleSystem : MonoBehaviour
         _playerUnit = player.GetComponent<UnitPlayer>();
 
         GameObject enemy = Instantiate(_enemyPrefab, _enemyPlace);
-        _enemyUnit = enemy.GetComponent<Unit>();
+        _enemyUnit = enemy.GetComponent<UnitEnemy>();
 
         _dialogueText.text = "Prepare to fight with - " + _enemyUnit.unitName;
 
@@ -61,10 +65,13 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(_delayTextFast);
 
         bool isDead = _enemyUnit.TakeDamage(_playerUnit.damage);
+
         StartCoroutine(_popDamage[1].PopTweenMove());
+        _dialogueText.text = "You deal to " + _enemyUnit.unitName + " " + _playerUnit.damage + " damage!";
+        _damageText[0].text = _playerUnit.damage.ToString();
 
         _enemyHUD.SetHP(_enemyUnit.currentHP);
-        _dialogueText.text = "You deal to " + _enemyUnit.unitName + " " + _playerUnit.damage + " damage!";
+
 
         yield return new WaitForSeconds(_delayText);
 
@@ -95,11 +102,14 @@ public class BattleSystem : MonoBehaviour
 
     private IEnumerator EnemyTurn()
     {
-        _dialogueText.text = _enemyUnit.unitName + " attack you on " + _enemyUnit.damage + " damage.";
-
+        _enemyUnit.MoveToAttack();
         yield return new WaitForSeconds(_delayTextFast);
 
         bool isDead = _playerUnit.TakeDamage(_enemyUnit.damage);
+
+        StartCoroutine(_popDamage[2].PopTweenMove());
+        _dialogueText.text = _enemyUnit.unitName + " attack you on " + _enemyUnit.damage + " damage.";
+        _damageText[1].text = _enemyUnit.damage.ToString();
 
         _playerHUD.SetHP(_playerUnit.currentHP);
 
@@ -123,7 +133,7 @@ public class BattleSystem : MonoBehaviour
         _dialogueText.text = "Choose an action:";
     }
 
-    private void EndBattle()
+    public void EndBattle()
     {
         if (_state == BattleState.WON)
         {
