@@ -2,14 +2,17 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 public enum BattleState { START, PLAYERTURN, ENEMYTURN, WON, LOST }
 
 public class BattleSystem : MonoBehaviour
 {
     [Header("GameObjects")]
+    [SerializeField] private GameObject _gameOverPanel;
     [SerializeField] private GameObject _playerPrefab;
-    [SerializeField] private GameObject _enemyPrefab;
+    [SerializeField] private GameObject[] _enemyPrefab;
+    [SerializeField] private SpriteRenderer _playerSprite;
 
     [SerializeField] private Transform _playerPlace;
     [SerializeField] private Transform _enemyPlace;
@@ -19,8 +22,8 @@ public class BattleSystem : MonoBehaviour
 
     [Header("Text")]
     [SerializeField] private Text _dialogueText;
-    [SerializeField] private TextMeshProUGUI [] _damageText; 
-    [SerializeField] private PopDamage [] _popDamage;
+    [SerializeField] private TextMeshProUGUI[] _damageText;
+    [SerializeField] private PopDamage[] _popDamage;
 
     private UnitPlayer _playerUnit;
     private UnitEnemy _enemyUnit;
@@ -29,11 +32,16 @@ public class BattleSystem : MonoBehaviour
     private float _delayTextFast = 1f;
     private float _delayAction = 0;
 
+    private int _nextLvl = 0;
+    private int _healPlayer = 30;
+
 
     private void Start()
     {
         _state = BattleState.START;
-        StartCoroutine(SetupBattle());
+        StartCoroutine(SetupBattle(_enemyPrefab[0]));
+
+        PlayerStart();
     }
 
     private void Update()
@@ -41,17 +49,20 @@ public class BattleSystem : MonoBehaviour
         _delayAction += Time.deltaTime;
     }
 
-    private IEnumerator SetupBattle()
+    private void PlayerStart()
     {
         GameObject player = Instantiate(_playerPrefab, _playerPlace);
         _playerUnit = player.GetComponent<UnitPlayer>();
+        _playerHUD.SetHUDPlayer(_playerUnit);
+    }
 
-        GameObject enemy = Instantiate(_enemyPrefab, _enemyPlace);
+    private IEnumerator SetupBattle(GameObject enemy)
+    {
+        enemy = Instantiate(enemy, _enemyPlace);
         _enemyUnit = enemy.GetComponent<UnitEnemy>();
 
         _dialogueText.text = "Prepare to fight with - " + _enemyUnit.unitName;
 
-        _playerHUD.SetHUDPlayer(_playerUnit);
         _enemyHUD.SetHUDEnemy(_enemyUnit);
 
         yield return new WaitForSeconds(_delayText);
@@ -72,10 +83,21 @@ public class BattleSystem : MonoBehaviour
 
         _enemyHUD.SetHP(_enemyUnit.currentHP);
 
-
         yield return new WaitForSeconds(_delayText);
 
-        if (isDead)
+        if (isDead && _nextLvl == 0)
+        {
+            _state = BattleState.PLAYERTURN;
+            StartCoroutine(SetupBattle(_enemyPrefab[1]));
+            _nextLvl++;
+        }
+        else if (isDead && _nextLvl == 1)
+        {
+            _state = BattleState.PLAYERTURN;
+            StartCoroutine(SetupBattle(_enemyPrefab[2]));
+            _nextLvl++;
+        }
+        else if (isDead && _nextLvl == 2)
         {
             _state = BattleState.WON;
             EndBattle();
@@ -89,10 +111,14 @@ public class BattleSystem : MonoBehaviour
 
     private IEnumerator PlayerHeal()
     {
-        _playerUnit.Heal(5);
+        SpriteRenderer player = GameObject.FindGameObjectWithTag("Player").GetComponent<SpriteRenderer>();
 
+        _playerUnit.Heal(_healPlayer);
         _playerHUD.SetHP(_playerUnit.currentHP);
-        _dialogueText.text = "You healed 5 points";
+
+        _dialogueText.text = "You healed " + _healPlayer + " points";
+
+        player.DOColor(Color.green,1f).SetLoops(2, LoopType.Yoyo);
 
         yield return new WaitForSeconds(_delayText);
 
@@ -113,7 +139,7 @@ public class BattleSystem : MonoBehaviour
 
         _playerHUD.SetHP(_playerUnit.currentHP);
 
-        yield return new WaitForSeconds(_delayTextFast);
+        yield return new WaitForSeconds(_delayText);
 
         if (isDead)
         {
@@ -142,6 +168,7 @@ public class BattleSystem : MonoBehaviour
         else if (_state == BattleState.LOST)
         {
             _dialogueText.text = "Defeat...";
+            _gameOverPanel.SetActive(true);
         }
     }
 
@@ -172,3 +199,4 @@ public class BattleSystem : MonoBehaviour
         }
     }
 }
+

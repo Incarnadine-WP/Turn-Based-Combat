@@ -31,7 +31,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: GiantBeetle
+  m_Name: GiantBeetle 1
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: Move
@@ -39,7 +39,7 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -126,7 +126,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 4acda9502d8223241a7182a5ad5fcad1, type: 2}
+  m_Motion: {fileID: 7400000, guid: 7a64612e1c4ac9c4b91e5b6e48b52cad, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

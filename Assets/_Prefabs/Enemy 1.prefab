@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 151630268684973553}
   - component: {fileID: -7409358358853943839}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: Enemy 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,14 +26,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7280545758675136538}
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 125, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7280545758675136539
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 21300006, guid: a50747b7090647445a1aa71f3aefd771, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7ed863ccbdc96f0438cc78a3c684e3e0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -96,7 +96,7 @@ Animator:
   m_GameObject: {fileID: 7280545758675136538}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a07733b06393a584f96dc285a135b2ba, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -118,10 +118,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 492ba31ad1baf784d8f2b408d13562a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitName: Purple Bug
-  unitLvl: 8
-  damage: 10
-  maxHP: 25
-  currentHP: 25
+  unitName: Crow
+  unitLvl: 12
+  damage: 12
+  maxHP: 42
+  currentHP: 42
   _targetPlayer: {fileID: 8855707469289424178, guid: 78604ad465dd4ba43aed635707900a29, type: 3}
   _animator: {fileID: 151630268684973553}
